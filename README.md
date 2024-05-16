@@ -12,4 +12,3 @@ Highway 3D visualization using scrolling texture co-ordinates.
 - Down, S: move backward on the road
 - Shift: move faster
 - Escape: reset road position
-- 
