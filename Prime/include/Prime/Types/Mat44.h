@@ -223,6 +223,26 @@ public:
     return *this;
   }
 
+  Mat44& LoadScaling(f32 scale) {
+    e11 = scale;
+    e21 = 0.0f;
+    e31 = 0.0f;
+    e41 = 0.0f;
+    e12 = 0.0f;
+    e22 = scale;
+    e32 = 0.0f;
+    e42 = 0.0f;
+    e13 = 0.0f;
+    e23 = 0.0f;
+    e33 = scale;
+    e43 = 0.0f;
+    e14 = 0.0f;
+    e24 = 0.0f;
+    e34 = 0.0f;
+    e44 = 1.0f;
+    return *this;
+  }
+
   Mat44& LoadRotation(f32 angle, f32 x = 0.0f, f32 y = 0.0f, f32 z = 1.0f);
   Mat44& LoadRotation(f32 angle, const Vec3& axis);
 
@@ -236,6 +256,7 @@ public:
   Mat44& Translate(const Vec3& pos);
   Mat44& Scale(f32 x, f32 y, f32 z = 1.0f);
   Mat44& Scale(const Vec3& scale);
+  Mat44& Scale(f32 scale);
   Mat44& Rotate(f32 angle, f32 x = 0.0f, f32 y = 0.0f, f32 z = 1.0f);
   Mat44& Rotate(f32 angle, const Vec3& axis);
 

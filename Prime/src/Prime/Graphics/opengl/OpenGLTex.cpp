@@ -72,7 +72,8 @@ textureId(0),
 depthTextureId(0),
 frameBufferId(0),
 renderBufferId(0),
-bufferComplete(false) {
+bufferComplete(false),
+generateMipmaps(false) {
 
 }
 
@@ -89,7 +90,8 @@ textureId(0),
 depthTextureId(0),
 frameBufferId(0),
 renderBufferId(0),
-bufferComplete(false) {
+bufferComplete(false),
+generateMipmaps(false) {
 
 }
 
@@ -98,7 +100,8 @@ textureId(0),
 depthTextureId(0),
 frameBufferId(0),
 renderBufferId(0),
-bufferComplete(false) {
+bufferComplete(false),
+generateMipmaps(false) {
 
 }
 
@@ -157,6 +160,29 @@ void OpenGLTex::SetWrapModeY(WrapMode wrapModeY) {
   }
 
   Tex::SetWrapModeY(wrapModeY);
+}
+
+void OpenGLTex::GenerateMipmaps() {
+  Tex::GenerateMipmaps();
+
+  generateMipmaps = true;
+
+  if(loadedIntoVRAM) {
+    GLint oldTextureId;
+    GLCMD(glGetIntegerv(GL_TEXTURE_BINDING_2D, &oldTextureId));
+    GLCMD(glBindTexture(GL_TEXTURE_2D, textureId));
+
+    if(filteringEnabled) {
+      GLCMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+    }
+    else {
+      GLCMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
+    }
+
+    GLCMD(glGenerateMipmap(GL_TEXTURE_2D));
+
+    GLCMD(glBindTexture(GL_TEXTURE_2D, oldTextureId));
+  }
 }
 
 bool OpenGLTex::LoadIntoVRAM() {
@@ -345,6 +371,17 @@ bool OpenGLTex::LoadIntoVRAMOpenGLTex() {
   }
   else {
     GLCMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0));
+  }
+
+  if(generateMipmaps) {
+    if(filteringEnabled) {
+      GLCMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+    }
+    else {
+      GLCMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
+    }
+
+    GLCMD(glGenerateMipmap(GL_TEXTURE_2D));
   }
 
   GLCMD(glBindTexture(GL_TEXTURE_2D, oldTextureId));

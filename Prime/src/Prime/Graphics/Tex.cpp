@@ -307,6 +307,10 @@ void Tex::SetWrapModeY(WrapMode wrapModeY) {
   this->wrapModeY = wrapModeY;
 }
 
+void Tex::GenerateMipmaps() {
+
+}
+
 void Tex::AddTexData(const std::string& name, const std::string& data) {
   AddTexData(name, data, json());
 }
@@ -1221,23 +1225,66 @@ bool Tex::LoadPixelsFromPNG(const void* data, size_t dataSize, TexData& texData)
 
   if(pixelSize == 4) {
     texData.format = TexFormatNative;
-    texData.formatName = "R8G8B8A8_sRGB";
+    if(channelSize == 2) {
+      texData.formatName = "R16G16B16A16_sRGB";
+    }
+    else if(channelSize == 1) {
+      texData.formatName = "R8G8B8A8_sRGB";
+    }
+    else {
+      texData = 0;
+      png_destroy_read_struct(&png, &pngInfo, nullptr);
+      dbgprintf("[Warning] Unsupported pixel size for texture format.");
+      return false;
+    }
   }
   else if(pixelSize == 3) {
     texData.format = TexFormatNative;
-    texData.formatName = "R8G8B8_sRGB";
+    if(channelSize == 2) {
+      texData.formatName = "R16G16B16_sRGB";
+    }
+    else if(channelSize == 1) {
+      texData.formatName = "R8G8B8_sRGB";
+    }
+    else {
+      texData = 0;
+      png_destroy_read_struct(&png, &pngInfo, nullptr);
+      dbgprintf("[Warning] Unsupported pixel size for texture format.");
+      return false;
+    }
   }
   else if(pixelSize == 2) {
-    texData.format = TexFormatR8G8;
+    if(channelSize == 1) {
+      texData.format = TexFormatR8G8;
+    }
+    else {
+      texData = 0;
+      png_destroy_read_struct(&png, &pngInfo, nullptr);
+      dbgprintf("[Warning] Unsupported pixel size for texture format.");
+      return false;
+    }
   }
   else if(pixelSize == 1) {
-    texData.format = TexFormatR8;
+    if(channelSize == 1) {
+      texData.format = TexFormatR8;
+    }
+    else {
+      texData = 0;
+      png_destroy_read_struct(&png, &pngInfo, nullptr);
+      dbgprintf("[Warning] Unsupported pixel size for texture format.");
+      return false;
+    }
   }
   else {
     texData = 0;
     png_destroy_read_struct(&png, &pngInfo, nullptr);
     dbgprintf("[Warning] Unsupported pixel size for texture format.");
     return false;
+  }
+
+  if(channelSize > 1) {
+    png_set_swap(png);
+    pixelSize *= channelSize;
   }
 
   texData.tw = (u32) GetNextPowerOf2(texData.w);

@@ -1442,9 +1442,13 @@ void ModelContentScene::ReadModelUsingAssimp(const void* data, size_t dataSize) 
       std::string formatHint(texture->achFormatHint);
 
       if(formatHint == "png" && png_sig_cmp((png_bytep) texture->pcData, 0, 8) == 0) {
-#pragma message("todo")
-        //Tex* tex = Tex::Create(texture->pcData, texture->mWidth);
-        //textures.push_back(tex);
+        std::string pngData((const char*) texture->pcData, texture->mWidth);
+
+        new Job(nullptr, [=](Job& job) {
+          Tex* tex = Tex::Create();
+          tex->AddTexData("", pngData);
+          textures.Add(tex);
+        });
       }
     }
   }

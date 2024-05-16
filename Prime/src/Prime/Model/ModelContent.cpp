@@ -65,6 +65,9 @@ bool ModelContent::Load(const void* data, size_t dataSize, const json& info) {
   else if(IsFormatFBX(data, dataSize, info)) {
     return LoadFromFBX(data, dataSize, info);
   }
+  else if(IsFormatOBJ(data, dataSize, info)) {
+    return LoadFromOBJ(data, dataSize, info);
+  }
 
   return false;
 }
@@ -144,6 +147,46 @@ bool ModelContent::LoadFromFBX(const void* data, size_t dataSize, const json& in
       actionLookup[action.name] = i;
     }
   }
+
+  textureCount = scene.GetTextureCount();
+  if(textureCount) {
+    textures = new ModelContentTexture[textureCount];
+
+    for(size_t i = 0; i < textureCount; i++) {
+      ModelContentTexture& texture = textures[i];
+
+      texture.name = string_printf("%d", i);
+
+      textureLookup[texture.name] = i;
+    }
+  }
+
+  for(size_t i = 0; i < sceneCount; i++) {
+    for(size_t j = 0; j < scene.meshCount; j++) {
+      ModelContentMesh& mesh = scene.meshes[j];
+      size_t textureIndex = mesh.GetTextureIndex();
+      if(textureIndex != PrimeNotFound && textureIndex < scene.GetTextureCount()) {
+        Tex* tex = scene.GetTexture(textureIndex);
+        mesh.SetDirectTex(tex);
+      }
+    }
+  }
+
+  return true;
+}
+
+bool ModelContent::LoadFromOBJ(const void* data, size_t dataSize, const json& info) {
+  sceneCount = 1;
+  scenes = new ModelContentScene[sceneCount];
+  ModelContentScene& scene = scenes[0];
+  scene.content = this;
+
+  scene.baseTransform.LoadIdentity();
+  scene.baseTransformScaleInv.LoadIdentity();
+
+  sceneLookup[scene.name] = 0;
+
+  scene.ReadModelUsingAssimp(data, dataSize);
 
   textureCount = scene.GetTextureCount();
   if(textureCount) {

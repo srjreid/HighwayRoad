@@ -396,6 +396,7 @@ public:
   virtual void SetFilteringEnabled(bool enabled);
   virtual void SetWrapModeX(WrapMode wrapModeX);
   virtual void SetWrapModeY(WrapMode wrapModeY);
+  virtual void GenerateMipmaps();
 
   virtual void AddTexData(const std::string& name, const std::string& data);
   virtual void AddTexData(const std::string& name, const std::string& data, const json& info);

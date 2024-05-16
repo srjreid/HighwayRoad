@@ -220,6 +220,7 @@ extern bool IsFormatJPEG(const void* data, size_t dataSize, const json& info);
 extern bool IsFormatBC(const void* data, size_t dataSize, const json& info);
 extern bool IsFormatGLTF(const void* data, size_t dataSize, const json& info);
 extern bool IsFormatFBX(const void* data, size_t dataSize, const json& info);
+extern bool IsFormatOBJ(const void* data, size_t dataSize, const json& info);
 extern bool IsFormatOTF(const void* data, size_t dataSize, const json& info);
 
 using ogalib::SetGlobalSendURLParams;

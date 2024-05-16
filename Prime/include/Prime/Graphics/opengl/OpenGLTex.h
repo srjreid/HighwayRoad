@@ -53,6 +53,7 @@ private:
   GLuint frameBufferId;
   GLuint renderBufferId;
   bool bufferComplete;
+  bool generateMipmaps;
 
   Dictionary<TexData*, GLint> texDataGLLevelLookup;
 
@@ -78,6 +79,7 @@ public:
   void SetFilteringEnabled(bool enabled) override;
   void SetWrapModeX(WrapMode wrapModeX) override;
   void SetWrapModeY(WrapMode wrapModeY) override;
+  void GenerateMipmaps() override;
 
   bool LoadIntoVRAM() override;
   bool UnloadFromVRAM() override;

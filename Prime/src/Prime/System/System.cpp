@@ -508,7 +508,7 @@ void Prime::GetContentByData(const std::string& uri, const void* data, size_t da
       OnContentLoadingDone(content, uri, locked, callback);
     });
   }
-  else if(IsFormatGLTF(data, dataSize, info) || IsFormatFBX(data, dataSize, info)) {
+  else if(IsFormatGLTF(data, dataSize, info) || IsFormatFBX(data, dataSize, info) || IsFormatOBJ(data, dataSize, info)) {
     bool locked = IncContentDataLoading(uri);
     refptr<ModelContent> content;
     if(locked) {
@@ -968,6 +968,31 @@ bool Prime::IsFormatFBX(const void* data, size_t dataSize, const json& info) {
 
       (void) readVersion;
 
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool Prime::IsFormatOBJ(const void* data, size_t dataSize, const json& info) {
+  if(data == nullptr)
+    return false;
+
+  char header[256];
+  if(dataSize >= sizeof(header)) {
+    memcpy(header, data, sizeof(header));
+    std::string headerStr(header, sizeof(header));
+
+    size_t pos;
+
+    pos = headerStr.find("mtllib");
+    if(pos != headerStr.npos) {
+      return true;
+    }
+
+    pos = headerStr.find("usemtl");
+    if(pos != headerStr.npos) {
       return true;
     }
   }

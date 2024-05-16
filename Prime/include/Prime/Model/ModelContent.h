@@ -126,6 +126,7 @@ public:
   bool Load(const void* data, size_t dataSize, const json& info) override;
   virtual bool LoadFromGLTF(const void* data, size_t dataSize, const json& info);
   virtual bool LoadFromFBX(const void* data, size_t dataSize, const json& info);
+  virtual bool LoadFromOBJ(const void* data, size_t dataSize, const json& info);
 
   virtual size_t GetSceneIndexByName(const std::string& name) const;
   virtual size_t GetActionIndexByName(const std::string& name) const;

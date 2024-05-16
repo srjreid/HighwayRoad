@@ -278,6 +278,13 @@ Mat44& Mat44::Scale(const Vec3& scale) {
     return *this;
 }
 
+Mat44& Mat44::Scale(f32 scale) {
+  if(scale != 1.0f)
+    return Multiply(Mat44().LoadScaling(scale));
+  else
+    return *this;
+}
+
 Mat44& Mat44::Rotate(f32 angle, f32 x, f32 y, f32 z) {
   if(angle != 0.0f)
     return Multiply(Mat44().LoadRotation(angle, x, y, z));
