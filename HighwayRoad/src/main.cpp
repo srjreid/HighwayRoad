@@ -367,18 +367,21 @@ int main(int argc, const char* const* argv) {
     }
 
     for(auto& obj: objects) {
-      auto modelContent = obj.model->GetModelContent();
-      if(modelContent) {
-        g.program.Push() = modelContent->GetActionCount() > 0 ? modelAnimProgram : modelProgram;
-        g.model.Push().LoadIdentity()
-          .Translate(obj.x, 0.0f, roadPos - obj.z)
-          .Rotate(obj.angle, 0.0f, 1.0f, 0.0f)
-          .Scale(obj.scale);
+      f32 pos = roadPos - obj.z;
+      if(pos >= -RoadRepetitionCount && pos <= RoadRepetitionCount) {
+        auto modelContent = obj.model->GetModelContent();
+        if(modelContent) {
+          g.program.Push() = modelContent->GetActionCount() > 0 ? modelAnimProgram : modelProgram;
+          g.model.Push().LoadIdentity()
+            .Translate(obj.x, 0.0f, pos)
+            .Rotate(obj.angle, 0.0f, 1.0f, 0.0f)
+            .Scale(obj.scale);
 
-        obj.model->Draw();
+          obj.model->Draw();
 
-        g.model.Pop();
-        g.program.Pop();
+          g.model.Pop();
+          g.program.Pop();
+        }
       }
     }
 
